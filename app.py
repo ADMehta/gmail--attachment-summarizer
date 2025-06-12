@@ -1,34 +1,35 @@
 from flask import Flask, request, jsonify
-from file_processor import extract_text_from_file
+from main import get_gmail_service, download_attachments_by_message_id
 from summary import summarize_text_gemini
-from main import get_gmail_service, get_emails_with_attachments, download_all_attachments
+from file_processor import extract_text_from_file
 import os
 
 app = Flask(__name__)
 
 @app.route("/")
-def index():
-    return "📬 Gmail Summarizer is up and running!"
+def home():
+    return "Gmail Summarizer is live!"
 
 @app.route("/summarize", methods=["POST"])
 def summarize_handler():
-    service = get_gmail_service()
-    emails = get_emails_with_attachments(service)
+    data = request.get_json()
+    message_id = data.get("message_id")
 
-    summaries = []
-    for email in emails:
-        file_paths = download_all_attachments(service, email['id'])
-        for path in file_paths:
-            text = extract_text_from_file(path)
-            if text:
-                summary = summarize_text_gemini(text, filename=os.path.basename(path))
-                summaries.append({
-                    "file": os.path.basename(path),
-                    "summary": summary
-                })
+    if not message_id:
+        return jsonify({"error": "Missing message_id"}), 400
 
-    return jsonify({"summaries": summaries})
+    try:
+        service = get_gmail_service()
+        files = download_attachments_by_message_id(service, message_id)
 
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(debug=False, host="0.0.0.0", port=port)
+        summaries = []
+        for file in files:
+            content = extract_text_from_file(file)
+            if content:
+                summary = summarize_text_gemini(content, filename=os.path.basename(file))
+                summaries.append({ "file": os.path.basename(file), "summary": summary })
+
+        return jsonify({ "summaries": summaries }), 200
+
+    except Exception as e:
+        return jsonify({ "error": str(e) }), 500
