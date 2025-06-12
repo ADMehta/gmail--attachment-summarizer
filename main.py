@@ -24,22 +24,34 @@ def get_gmail_service():
     return build("gmail", "v1", credentials=creds)
 
 def download_attachments_by_message_id(service, message_id):
-    message = service.users().messages().get(userId="me", id=message_id).execute()
-    parts = message.get("payload", {}).get("parts", [])
+    import base64
+    message = service.users().messages().get(userId='me', id=message_id, format='full').execute()
+    payload = message.get('payload', {})
+    parts = payload.get('parts', [])
     os.makedirs("downloads", exist_ok=True)
     files = []
 
     for part in parts:
         filename = part.get("filename")
-        attachment_id = part.get("body", {}).get("attachmentId")
+        mime_type = part.get("mimeType")
+        body = part.get("body", {})
+        attachment_id = body.get("attachmentId")
+
         if filename and attachment_id:
+            # Traditional attachment
             attachment = service.users().messages().attachments().get(
-                userId="me", messageId=message_id, id=attachment_id
+                userId='me', messageId=message_id, id=attachment_id
             ).execute()
-            data = base64.urlsafe_b64decode(attachment["data"])
-            filepath = os.path.join("downloads", filename)
-            with open(filepath, "wb") as f:
-                f.write(data)
-            files.append(filepath)
+            data = base64.urlsafe_b64decode(attachment['data'])
+        elif filename and "data" in body:
+            # Inline attachment (especially .txt)
+            data = base64.urlsafe_b64decode(body['data'])
+        else:
+            continue  # skip empty or unsupported parts
+
+        path = os.path.join("downloads", filename)
+        with open(path, "wb") as f:
+            f.write(data)
+        files.append(path)
 
     return files
