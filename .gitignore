@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+.env
+token.json
+credentials.json
+downloads/
+summaries/
+pdf_summary_env_312/
+pdf_summary_env/
+*.dylib
+*.so
+*.pyd
+__pycache__/
+*.egg-info/
+

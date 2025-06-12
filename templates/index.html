@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>📬 Gmail Summarizer</title>
+  <script>
+    async function summarizeSelected() {
+      const checkboxes = document.querySelectorAll('input[name="email"]:checked');
+      const emailIds = Array.from(checkboxes).map(cb => cb.value);
+      if (!emailIds.length) return alert("Select at least one email.");
+
+      const res = await fetch("/summarize", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ emailIds })
+      });
+      const summaries = await res.json();
+
+      let output = "<h3>🧾 Summaries</h3>";
+      summaries.forEach(s => {
+        output += `<h4>${s.filename}</h4><p>${s.summary}</p><hr>`;
+      });
+
+      document.getElementById("modalContent").innerHTML = output;
+      document.getElementById("summaryModal").style.display = "block";
+    }
+
+    function closeModal() {
+      document.getElementById("summaryModal").style.display = "none";
+    }
+  </script>
+  <style>
+    #summaryModal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+    }
+    #modalBox {
+      background: white;
+      margin: 10% auto;
+      padding: 20px;
+      width: 60%;
+    }
+  </style>
+</head>
+<body>
+  <h2>📬 Emails with Attachments</h2>
+  <form onsubmit="event.preventDefault(); summarizeSelected();">
+    {% for email in emails %}
+      <input type="checkbox" name="email" value="{{ email.id }}">
+      <b>{{ email.subject }}</b> — {{ email.from }} <br> {{ email.date }} <br><br>
+    {% endfor %}
+    <button type="submit">🧠 Summarize Selected</button>
+  </form>
+
+  <div id="summaryModal">
+    <div id="modalBox">
+      <button onclick="closeModal()">✖️ Close</button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+</body>
+</html>
