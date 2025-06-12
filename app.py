@@ -14,6 +14,7 @@ def home():
 def summarize_handler():
     data = request.get_json()
     message_id = data.get("message_id")
+    print("📩 Received message ID:", message_id)
 
     if not message_id:
         return jsonify({"error": "Missing message_id"}), 400
@@ -21,6 +22,8 @@ def summarize_handler():
     try:
         service = get_gmail_service()
         files = download_attachments_by_message_id(service, message_id)
+        print("📎 Attachments found:", files)
+
 
         summaries = []
         for file in files:
