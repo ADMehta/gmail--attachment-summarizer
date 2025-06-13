@@ -14,28 +14,34 @@ def home():
 def summarize_handler():
     data = request.get_json()
     message_id = data.get("message_id")
-    print("📩 Received message ID:", message_id)
+    print("📩 message_id received:", message_id)
 
     if not message_id:
+        print("❌ Missing message_id in request")
         return jsonify({"error": "Missing message_id"}), 400
 
     try:
         service = get_gmail_service()
-        files = download_attachments_by_message_id(service, message_id)
-        print("📎 Attachments found:", files)
+        print("✅ Gmail service initialized")
 
+        files = download_attachments_by_message_id(service, message_id)
+        print("📎 Files downloaded:", files)
 
         summaries = []
         for file in files:
+            print("🧾 Processing file:", file)
             content = extract_text_from_file(file)
             if content:
                 summary = summarize_text_gemini(content, filename=os.path.basename(file))
-                summaries.append({ "file": os.path.basename(file), "summary": summary })
+                summaries.append({"file": os.path.basename(file), "summary": summary})
 
-        return jsonify({ "summaries": summaries }), 200
+        print("✅ Summaries ready:", summaries)
+        return jsonify({"summaries": summaries}), 200
 
     except Exception as e:
-        return jsonify({ "error": str(e) }), 500
+        print("🔥 Exception occurred:", str(e))
+        return jsonify({"error": str(e)}), 500
+
 
 if __name__ == "__main__":
     import os
