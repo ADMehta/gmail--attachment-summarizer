@@ -17,7 +17,8 @@ def summarize_text_gemini(text, filename=None):
     """Summarizes text using Gemini AI with context-aware prompting."""
 
     api_key = get_gemini_api_key()
-    genai.configure(api_key=api_key)
+    genai.configure(api_key=api_key,project_id="gmailattachmentsummarizer",location="us-central1")
+    
 
     filetype_prompt = ""
     if filename:
