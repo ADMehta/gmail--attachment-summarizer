@@ -6,12 +6,15 @@ import os
 
 app = Flask(__name__)
 
+print("🚀 Flask app is starting up...")
+
 @app.route("/")
 def home():
     return "Gmail Summarizer is live!"
 
 @app.route("/summarize", methods=["POST"])
 def summarize_handler():
+    print("⚡️ /summarize endpoint hit")
     print("📦 Raw body:", request.data)
     try:
         data = request.get_json(force=True)
@@ -60,4 +63,4 @@ def summarize_handler():
 if __name__ == "__main__":
     import os
     port = int(os.environ.get("PORT", 10000))  # Render sets PORT env var automatically
-    app.run(host="0.0.0.0", port=port)
+    app.run(host="0.0.0.0", port=port, debug=True, use_reloader=False)
