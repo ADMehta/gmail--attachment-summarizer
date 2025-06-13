@@ -47,6 +47,7 @@ def extract_text_from_image(file_path):
 
 def extract_text_from_file(file_path):
     ext = os.path.splitext(file_path)[-1].lower()
+    print(f"📂 Processing file: {file_path}, extension: {ext}")
 
     if ext == ".pdf":
         return extract_text_from_pdf(file_path)
@@ -61,3 +62,4 @@ def extract_text_from_file(file_path):
     else:
         print(f"⚠️ Unsupported file type: {ext}")
         return ""
+
