@@ -1,6 +1,7 @@
 import os
 import json
 import google.generativeai as genai
+import vertexai
 
 def get_gemini_api_key():
     try:
@@ -15,9 +16,13 @@ def get_gemini_api_key():
 
 def summarize_text_gemini(text, filename=None):
     """Summarizes text using Gemini AI with context-aware prompting."""
-
+    
+    vertextai.init(project="gmailattachmentsummarizer",location="us-central1")
+    
     api_key = get_gemini_api_key()
-    genai.configure(api_key=api_key,project_id="gmailattachmentsummarizer",location="us-central1")
+    #genai.configure(api_key=api_key,project_id="gmailattachmentsummarizer",location="us-central1")
+    genai.configure(api_key=api_key)
+    
     
 
     filetype_prompt = ""
