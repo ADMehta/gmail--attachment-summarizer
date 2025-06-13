@@ -18,23 +18,23 @@ def summarize_handler():
     print("📦 Raw body:", request.data, flush=True)
     try:
         data = request.get_json(force=True)
-        print("📩 Raw request data:", data)
+        print("📩 Raw request data:", data, flush=True)
 
         if not data or "message_id" not in data:
-            print("❌ Missing or invalid message_id in request.")
+            print("❌ Missing or invalid message_id in request.", flush=True)
             return jsonify({"error": "Missing or invalid message_id"}), 400
 
         message_id = data["message_id"]
-        print("📩 message_id received:", message_id)
+        print("📩 message_id received:", message_id, flush=True)
 
         service = get_gmail_service()
-        print("✅ Gmail API service initialized")
+        print("✅ Gmail API service initialized", flush=True)
 
         files = download_attachments_by_message_id(service, message_id)
-        print(f"📎 Files downloaded: {files}")
+        print(f"📎 Files downloaded: {files}", flush=True)
 
         if not files:
-            print("⚠️ No attachments found for this message.")
+            print("⚠️ No attachments found for this message.", flush=True)
             return jsonify({"summaries": []}), 200
 
         summaries = []
@@ -49,13 +49,13 @@ def summarize_handler():
                     "summary": summary
                 })
             else:
-                print(f"⚠️ No readable content extracted from {file}")
+                print(f"⚠️ No readable content extracted from {file}", flush=True)
 
         print("✅ Summaries prepared:", summaries)
         return jsonify({"summaries": summaries}), 200
 
     except Exception as e:
-        print("🔥 Exception during summarization:", str(e))
+        print("🔥 Exception during summarization:", str(e), flush=True)
         return jsonify({"error": f"Server error: {str(e)}"}), 500
 
 
