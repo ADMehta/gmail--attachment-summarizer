@@ -10,6 +10,7 @@ with open("gemini_key.json") as f:
 print ( "GEMINI_API_KEY:::", api_key)
 if not api_key:
     raise ValueError("❌ GEMINI_API_KEY not found. Check your .env file.")
+
 genai.configure(api_key=api_key)
 
 def summarize_text_gemini(text, filename=None):
