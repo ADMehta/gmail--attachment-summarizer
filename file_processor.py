@@ -11,7 +11,7 @@ def extract_text_from_pdf(file_path):
             reader = PyPDF2.PdfReader(f)
             return "\n".join([page.extract_text() or "" for page in reader.pages])
     except Exception as e:
-        print(f"❌ PDF extraction failed: {e}")
+        print(f"❌ PDF extraction failed: {e}", flush=True)
         return ""
 
 def extract_text_from_docx(file_path):
@@ -19,7 +19,7 @@ def extract_text_from_docx(file_path):
         doc = docx.Document(file_path)
         return "\n".join([para.text for para in doc.paragraphs])
     except Exception as e:
-        print(f"❌ DOCX extraction failed: {e}")
+        print(f"❌ DOCX extraction failed: {e}", flush=True)
         return ""
 
 def extract_text_from_txt(file_path):
@@ -27,7 +27,7 @@ def extract_text_from_txt(file_path):
         with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
             return f.read()
     except Exception as e:
-        print(f"❌ TXT extraction failed: {e}")
+        print(f"❌ TXT extraction failed: {e}", flush=True)
         return ""
 
 def extract_text_from_csv(file_path):
@@ -35,14 +35,14 @@ def extract_text_from_csv(file_path):
         df = pd.read_csv(file_path)
         return df.to_string(index=False)
     except Exception as e:
-        print(f"❌ CSV extraction failed: {e}")
+        print(f"❌ CSV extraction failed: {e}", flush=True))
         return ""
 
 def extract_text_from_image(file_path):
     try:
         return pytesseract.image_to_string(Image.open(file_path))
     except Exception as e:
-        print(f"❌ OCR extraction failed: {e}")
+        print(f"❌ OCR extraction failed: {e}", flush=True)
         return ""
 
 def extract_text_from_file(file_path):
@@ -60,6 +60,6 @@ def extract_text_from_file(file_path):
     elif ext in [".png", ".jpg", ".jpeg", ".bmp", ".tiff"]:
         return extract_text_from_image(file_path)
     else:
-        print(f"⚠️ Unsupported file type: {ext}")
+        print(f"⚠️ Unsupported file type: {ext}", flush=True)
         return ""
 
