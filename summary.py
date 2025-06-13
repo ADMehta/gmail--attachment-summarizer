@@ -40,7 +40,10 @@ def summarize_text_gemini(text, filename=None):
 
     prompt = f"{filetype_prompt}\n\n{text.strip()}"
     print("⚡️ BEFORE GenerativeModel", flush=True)
-    model = genai.GenerativeModel("gemini-1.5-pro")
+    
+    model = genai.GenerativeModel("gemini-1.5-flash")
+
+    #model = genai.GenerativeModel("gemini-1.5-pro")
     response = model.generate_content(
         prompt,
         generation_config={
