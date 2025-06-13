@@ -4,6 +4,8 @@ from summary import summarize_text_gemini
 from file_processor import extract_text_from_file
 import os
 
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "credentials.json"
+
 app = Flask(__name__)
 
 print("🚀 Flask app is starting up...")
