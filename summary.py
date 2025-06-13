@@ -10,7 +10,7 @@ def get_gemini_api_key():
                 raise ValueError("❌ GEMINI_API_KEY is empty.")
             return key
     except Exception as e:
-        print("❌ Failed to load Gemini key:", e)
+        print("❌ Failed to load Gemini key:", e, flush=True)
         raise
 
 def summarize_text_gemini(text, filename=None):
