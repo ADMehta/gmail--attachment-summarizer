@@ -1,4 +1,5 @@
 import os
+import json
 import base64
 from google.oauth2.credentials import Credentials
 from google.auth.transport.requests import Request
@@ -9,19 +10,36 @@ SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"]
 def get_gmail_service():
     """Authenticate and return the Gmail API service."""
     print("🔐 Initializing Gmail service...")
-    creds = None
 
-    if os.path.exists("token.json"):
-        creds = Credentials.from_authorized_user_file("token.json", SCOPES)
+    # ✅ Step 3: Validate token.json structure before loading
+    try:
+        with open("token.json") as f:
+            creds_data = json.load(f)
+            print("🗝 token.json keys:", creds_data.keys())
+
+        missing = []
+        for field in ["client_id", "client_secret", "refresh_token"]:
+            if field not in creds_data or not creds_data[field]:
+                missing.append(field)
+
+        if missing:
+            raise ValueError(f"❌ token.json is missing: {', '.join(missing)}")
+
+    except Exception as e:
+        print("🚨 Failed to load or validate token.json:", e)
+        raise
+
+    # Load credentials now that format is validated
+    creds = Credentials.from_authorized_user_file("token.json", SCOPES)
 
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             print("♻️ Refreshing expired token...")
             creds.refresh(Request())
         else:
-            raise Exception("❌ Missing or invalid token.json — make sure OAuth flow was completed.")
+            raise Exception("❌ Invalid or expired Gmail credentials.")
 
-    print("✅ Gmail service ready.")
+    print("✅ Gmail service authorized.")
     return build("gmail", "v1", credentials=creds)
 
 def download_attachments_by_message_id(service, message_id, save_dir="downloads"):
@@ -44,27 +62,26 @@ def download_attachments_by_message_id(service, message_id, save_dir="downloads"
 
         try:
             if filename and attachment_id:
-                # Traditional attachment
                 attachment = service.users().messages().attachments().get(
                     userId="me", messageId=message_id, id=attachment_id
                 ).execute()
                 data = attachment.get("data")
             elif filename and "data" in body:
-                # Inline base64-encoded body (e.g., .txt)
                 data = body["data"]
             else:
-                print(f"⚠️ Skipping part — no filename or data.")
+                print("⚠️ Skipping part: no file or data found.")
                 continue
 
-            if data:
-                file_data = base64.urlsafe_b64decode(data.encode("UTF-8"))
-                path = os.path.join(save_dir, filename)
-                with open(path, "wb") as f:
-                    f.write(file_data)
-                files.append(path)
-                print(f"📎 Saved attachment: {path}")
-        except Exception as e:
-            print(f"🔥 Failed to save {filename}: {e}")
+            file_data = base64.urlsafe_b64decode(data.encode("UTF-8"))
+            path = os.path.join(save_dir, filename)
 
-    print(f"📦 Total attachments saved: {len(files)}")
+            with open(path, "wb") as f:
+                f.write(file_data)
+            files.append(path)
+            print(f"📎 Saved attachment: {path}")
+
+        except Exception as e:
+            print(f"🔥 Failed to process part: {e}")
+
+    print(f"📦 Total attachments downloaded: {len(files)}")
     return files
