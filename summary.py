@@ -23,8 +23,6 @@ def summarize_text_gemini(text, filename=None):
     #genai.configure(api_key=api_key,project_id="gmailattachmentsummarizer",location="us-central1")
     genai.configure(api_key=api_key)
     
-    
-
     filetype_prompt = ""
     if filename:
         ext = os.path.splitext(filename)[-1].lower()
@@ -40,7 +38,7 @@ def summarize_text_gemini(text, filename=None):
         }.get(ext, "Summarize the following document's content.")
 
     prompt = f"{filetype_prompt}\n\n{text.strip()}"
-
+    print("⚡️ BEFORE GenerativeModel", flush=True)
     model = genai.GenerativeModel("gemini-1.5-pro")
     response = model.generate_content(
         prompt,
@@ -49,4 +47,5 @@ def summarize_text_gemini(text, filename=None):
             "max_output_tokens": 200
         }
     )
+    print("⚡️ AFTER GenerativeModel", flush=True)
     return response.text.strip()
