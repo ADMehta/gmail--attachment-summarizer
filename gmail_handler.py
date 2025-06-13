@@ -9,13 +9,13 @@ SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"]
 
 def get_gmail_service():
     """Authenticate and return the Gmail API service."""
-    print("🔐 Initializing Gmail service...")
+    print("🔐 Initializing Gmail service...", flush=True)
 
     # ✅ Step 3: Validate token.json structure before loading
     try:
         with open("token.json") as f:
             creds_data = json.load(f)
-            print("🗝 token.json keys:", creds_data.keys())
+            print("🗝 token.json keys:", creds_data.keys(), flush=True)
 
         missing = []
         for field in ["client_id", "client_secret", "refresh_token"]:
@@ -26,7 +26,7 @@ def get_gmail_service():
             raise ValueError(f"❌ token.json is missing: {', '.join(missing)}")
 
     except Exception as e:
-        print("🚨 Failed to load or validate token.json:", e)
+        print("🚨 Failed to load or validate token.json:", e, flush=True)
         raise
 
     # Load credentials now that format is validated
@@ -34,7 +34,7 @@ def get_gmail_service():
 
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
-            print("♻️ Refreshing expired token...")
+            print("♻️ Refreshing expired token...", flush=True)
             creds.refresh(Request())
         else:
             raise Exception("❌ Invalid or expired Gmail credentials.")
@@ -44,7 +44,7 @@ def get_gmail_service():
 
 def download_attachments_by_message_id(service, message_id, save_dir="downloads"):
     """Downloads all attachments from a Gmail message."""
-    print(f"📨 Fetching Gmail message: {message_id}")
+    print(f"📨 Fetching Gmail message: {message_id}", flush=True)
     message = service.users().messages().get(userId="me", id=message_id, format="full").execute()
     payload = message.get("payload", {})
     parts = payload.get("parts", [])
@@ -58,7 +58,7 @@ def download_attachments_by_message_id(service, message_id, save_dir="downloads"
         body = part.get("body", {})
         attachment_id = body.get("attachmentId")
 
-        print(f"🔍 Part {idx + 1}: {mime_type} — {filename}")
+        print(f"🔍 Part {idx + 1}: {mime_type} — {filename}", flush=True)
 
         try:
             if filename and attachment_id:
@@ -69,7 +69,7 @@ def download_attachments_by_message_id(service, message_id, save_dir="downloads"
             elif filename and "data" in body:
                 data = body["data"]
             else:
-                print("⚠️ Skipping part: no file or data found.")
+                print("⚠️ Skipping part: no file or data found.", flush=True)
                 continue
 
             file_data = base64.urlsafe_b64decode(data.encode("UTF-8"))
@@ -78,10 +78,10 @@ def download_attachments_by_message_id(service, message_id, save_dir="downloads"
             with open(path, "wb") as f:
                 f.write(file_data)
             files.append(path)
-            print(f"📎 Saved attachment: {path}")
+            print(f"📎 Saved attachment: {path}", flush=True)
 
         except Exception as e:
             print(f"🔥 Failed to process part: {e}")
 
-    print(f"📦 Total attachments downloaded: {len(files)}")
+    print(f"📦 Total attachments downloaded: {len(files)}", flush=True)
     return files
