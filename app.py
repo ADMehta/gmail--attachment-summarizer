@@ -12,6 +12,7 @@ def home():
 
 @app.route("/summarize", methods=["POST"])
 def summarize_handler():
+    print("📦 Raw body:", request.data)
     try:
         data = request.get_json(force=True)
         print("📩 Raw request data:", data)
