@@ -10,12 +10,12 @@ print("🚀 Flask app is starting up...")
 
 @app.route("/")
 def home():
-    return "Gmail Summarizer is live!"
+    return "Gmail Summarizer is live!...."
 
 @app.route("/summarize", methods=["POST"])
 def summarize_handler():
-    print("⚡️ /summarize endpoint hit")
-    print("📦 Raw body:", request.data)
+    print("⚡️ /summarize endpoint hit", flush=True)
+    print("📦 Raw body:", request.data, flush=True)
     try:
         data = request.get_json(force=True)
         print("📩 Raw request data:", data)
