@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from main import get_gmail_service, download_attachments_by_message_id
+from gmail_handler import get_gmail_service, download_attachments_by_message_id
 from summary import summarize_text_gemini
 from file_processor import extract_text_from_file
 import os
