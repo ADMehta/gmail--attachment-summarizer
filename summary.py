@@ -4,10 +4,10 @@ import google.generativeai as genai
 import json
 
 # Load Gemini API Key from gemini_key.json 
-
 with open("gemini_key.json") as f:
     api_key = json.load(f)["GEMINI_API_KEY"]
-
+    
+print ( "GEMINI_API_KEY:::", api_key)
 if not api_key:
     raise ValueError("❌ GEMINI_API_KEY not found. Check your .env file.")
 genai.configure(api_key=api_key)
