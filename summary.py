@@ -7,6 +7,7 @@ def get_gemini_api_key():
     try:
         with open("gemini_key.json") as f:
             key = json.load(f)["GEMINI_API_KEY"]
+            print("GEMINI API KEY: ", key, flush=True)
             if not key:
                 raise ValueError("❌ GEMINI_API_KEY is empty.")
             return key
