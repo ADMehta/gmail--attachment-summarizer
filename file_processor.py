@@ -35,7 +35,7 @@ def extract_text_from_csv(file_path):
         df = pd.read_csv(file_path)
         return df.to_string(index=False)
     except Exception as e:
-        print(f"❌ CSV extraction failed: {e}", flush=True))
+        print(f"❌ CSV extraction failed: {e}", flush=True)
         return ""
 
 def extract_text_from_image(file_path):
