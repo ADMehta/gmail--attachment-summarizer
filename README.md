@@ -42,6 +42,14 @@ python main.py
 ### 5. Access the Web Interface
 - Open `index.html` in your browser for a user-friendly interface.
 
+## 6. Run on gmail mailbox  - Addon
+- Application is hosted on [render.com]
+- Select gmail-attachment-summarizer project and manually deploy
+- once the service is live, login to your gmail mailbox
+- click on 'summarizer' addon from ride sidebar
+- Select and email with attachment and click on 'Summarize attachment' button
+  
+
 ## Usage
 - Authenticate with Gmail.
 - Select emails with attachments.
@@ -53,10 +61,6 @@ Contributions are welcome! Please follow these steps:
 - Fork the repository.
 - Create a feature branch.
 - Submit a pull request with clear documentation.
-
-## License
-This project is released under the MIT License.
-
 
  
  Please see this Presentation file in the repo for more details. -** Email Attachment  Summarizer-Gmail.pptx**
